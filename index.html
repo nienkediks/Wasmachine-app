@@ -99,6 +99,47 @@
       color: var(--text-secondary);
     }
 
+    .changelog {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .changelog summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .changelog summary::-webkit-details-marker { display: none; }
+    .changelog summary::after {
+      content: "▾";
+      margin-left: auto;
+      font-size: 10px;
+      transition: transform 0.15s ease;
+    }
+    .changelog[open] summary::after { transform: rotate(180deg); }
+    .cl-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    #cl-list { margin-top: 0.55rem; }
+    .cl-date {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0.65rem 0 0.2rem;
+    }
+    .cl-date:first-child { margin-top: 0; }
+    #cl-list ul { margin: 0; padding-left: 1.1rem; }
+    #cl-list li { margin-bottom: 0.2rem; }
+
     .controls {
       position: sticky;
       top: 0;
@@ -411,6 +452,14 @@
 </head>
 <body>
   <div class="wrap">
+    <details class="changelog" id="changelog">
+      <summary>
+        <span class="cl-dot"></span>
+        <span id="cl-summary"></span>
+      </summary>
+      <div id="cl-list"></div>
+    </details>
+
     <header>
       <div class="eyebrow">Mijn wasmachine</div>
       <h1>Indesit Innex BWA 71483</h1>
@@ -486,6 +535,21 @@
   </div>
 
   <script>
+    /* ----------------------------------------------------------------
+       Wijzigingen — zet nieuwe aanpassingen bovenaan. Elke regel:
+       { date: "JJJJ-MM-DD", items: ["wat er veranderd is", ...] }
+    ---------------------------------------------------------------- */
+    const CHANGELOG = [
+      {
+        date: "2026-05-14",
+        items: [
+          "Snelmenu toegevoegd om direct naar een programma te springen",
+          "Layout geoptimaliseerd voor mobiel",
+          "Eerste versie: alle 14 programma's met uitleg en nat- en kreukelindicatie"
+        ]
+      }
+    ];
+
     /* ----------------------------------------------------------------
        Programmagegevens — pas hier gerust aan als jouw handleiding
        andere waarden geeft.
@@ -638,6 +702,23 @@
         .replace(/(^-|-$)/g, "");
     }
 
+    const MONTHS = ["januari", "februari", "maart", "april", "mei", "juni",
+      "juli", "augustus", "september", "oktober", "november", "december"];
+
+    function formatDate(iso) {
+      const [y, m, d] = iso.split("-").map(Number);
+      return d + " " + MONTHS[m - 1] + " " + y;
+    }
+
+    function renderChangelog() {
+      document.getElementById("cl-summary").textContent =
+        "Laatst bijgewerkt: " + formatDate(CHANGELOG[0].date);
+      document.getElementById("cl-list").innerHTML = CHANGELOG.map(entry =>
+        `<div class="cl-date">${formatDate(entry.date)}</div>` +
+        `<ul>${entry.items.map(it => `<li>${it}</li>`).join("")}</ul>`
+      ).join("");
+    }
+
     function segments(value, kind) {
       let out = "";
       for (let i = 1; i <= 5; i++) {
@@ -752,6 +833,7 @@
       render();
     });
 
+    renderChangelog();
     renderMenu();
     renderFilters();
     render();
