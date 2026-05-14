@@ -156,6 +156,45 @@
       margin-top: 1.25rem;
     }
 
+    .menu {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.25rem;
+    }
+    .menu-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+    }
+    .menu-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .menu-badge {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--bg);
+      background: var(--badge-color, var(--text-secondary));
+      min-width: 1.7rem;
+      height: 1.7rem;
+      padding: 0 0.4rem;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+    .menu-badge:hover { opacity: 0.85; }
+    .menu-badge:active { transform: scale(0.92); }
+
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -165,7 +204,13 @@
       border-left: 3px solid var(--cat-color, var(--border));
       display: flex;
       flex-direction: column;
+      scroll-margin-top: 150px;
     }
+    @keyframes flash {
+      0%, 55% { box-shadow: 0 0 0 3px var(--cat-color), var(--shadow); }
+      100% { box-shadow: 0 0 0 0 transparent, var(--shadow); }
+    }
+    .card.flash { animation: flash 1.3s ease; }
 
     .card-top {
       display: flex;
@@ -356,6 +401,7 @@
       .meter-val { width: 3.9rem; }
       .explainer { padding: 1.15rem; margin-top: 2rem; }
       .explainer .legend { grid-template-columns: 1fr; }
+      .card { scroll-margin-top: 120px; }
     }
 
     @media (hover: none) {
@@ -381,6 +427,11 @@
         <span class="spec">InverterMotor</span>
       </div>
     </header>
+
+    <nav class="menu" aria-label="Snel naar programma">
+      <span class="menu-label">Snel naar</span>
+      <div class="menu-badges" id="menu"></div>
+    </nav>
 
     <div class="controls">
       <input
@@ -579,6 +630,13 @@
     const grid = document.getElementById("grid");
     const filtersEl = document.getElementById("filters");
     const searchEl = document.getElementById("search");
+    const menuEl = document.getElementById("menu");
+
+    function slug(p) {
+      return p.name.toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    }
 
     function segments(value, kind) {
       let out = "";
@@ -596,7 +654,7 @@
       const loadTxt = p.load == null ? "n.v.t." : p.load + " kg";
       const spinTxt = p.spin === 0 ? "geen" : p.spin + " tpm";
       return `
-        <article class="card" style="--cat-color:${color}">
+        <article class="card" id="prog-${slug(p)}" style="--cat-color:${color}">
           <div class="card-top">
             <span class="num">${p.n}</span>
             <h3>${p.name}</h3>
@@ -651,6 +709,31 @@
       grid.innerHTML = list.map(card).join("");
     }
 
+    function jumpTo(targetSlug) {
+      searchEl.value = "";
+      query = "";
+      activeCat = "all";
+      renderFilters();
+      render();
+      const el = document.getElementById("prog-" + targetSlug);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.classList.remove("flash");
+      void el.offsetWidth;
+      el.classList.add("flash");
+    }
+
+    function renderMenu() {
+      menuEl.innerHTML = PROGRAMS.map(p =>
+        `<button class="menu-badge" data-target="${slug(p)}"
+           title="${p.name}" aria-label="Ga naar programma ${p.n}: ${p.name}"
+           style="--badge-color:${CAT_COLOR[p.cat]}">${p.n}</button>`
+      ).join("");
+      menuEl.querySelectorAll(".menu-badge").forEach(btn => {
+        btn.addEventListener("click", () => jumpTo(btn.dataset.target));
+      });
+    }
+
     function renderFilters() {
       filtersEl.innerHTML = CATEGORIES.map(c =>
         `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeCat}">${c.label}</button>`
@@ -669,6 +752,7 @@
       render();
     });
 
+    renderMenu();
     renderFilters();
     render();
   </script>
