@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wasmachine programma's</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f3;
+      --surface: #ffffff;
+      --surface-secondary: #f1efe8;
+      --text-primary: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --border: rgba(0,0,0,0.1);
+      --border-hover: rgba(0,0,0,0.2);
+      --accent: #185fa5;
+      --accent-bg: #e6f1fb;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --surface: #242422;
+        --surface-secondary: #2c2c2a;
+        --text-primary: #f1efe8;
+        --text-secondary: #888780;
+        --border: rgba(255,255,255,0.1);
+        --border-hover: rgba(255,255,255,0.2);
+        --accent: #85b7eb;
+        --accent-bg: #0c447c;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 2rem;
+    }
+
+    .drum {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-hover);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.125rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s;
+      user-select: none;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .card.active {
+      border: 2px solid var(--accent);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--surface-secondary);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1rem;
+      display: none;
+      animation: slideIn 0.2s ease;
+    }
+
+    .detail.visible {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .detail-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .detail-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .detail-long {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .stat-val {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tips {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .tips-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .tip {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+      line-height: 1.5;
+    }
+
+    .tip i {
+      color: #3b6d11;
+      margin-top: 2px;
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .tip i { color: #97c459; }
+    }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: 1fr 1fr 1fr; }
+      .stat-val { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="drum">
+        <i class="ti ti-wash-machine"></i>
+      </div>
+      <div>
+        <h1>Wasmachine programma's</h1>
+        <p class="subtitle">Klik op een programma voor meer informatie</p>
+      </div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+    <div class="detail" id="detail"></div>
+  </div>
+
+  <script>
+    const programs = [
+      {
+        id: 0, name: "Katoen 60°", icon: "ti-shirt",
+        bg: "#dbeafe", iconColor: "#1d4ed8",
+        desc: "Voor stevige katoenen kleding zoals handdoeken, beddengoed en werkkleding.",
+        long: "Het katoen 60°-programma is het meest krachtige dagelijkse wasprogramma. De hoge temperatuur vernietigt bacteriën en verwijdert hardnekkige vlekken effectief. Ideaal voor items die intensief worden gebruikt.",
+        temp: "60°C", tijd: "1u 45m", centrifuge: "1200 rpm",
+        tips: ["Geschikt voor wit en lichtgekleurd katoen", "Vermijd donkere kleuren — die kunnen verkleuren", "Gebruik wasmiddel voor witte was voor het beste resultaat"]
+      },
+      {
+        id: 1, name: "Katoen 40°", icon: "ti-shirt",
+        bg: "#dcfce7", iconColor: "#166534",
+        desc: "Voor gekleurde katoenen kleding die een milder wasprogramma nodig heeft.",
+        long: "Het meest gebruikte programma voor alledaagse kleding. De lagere temperatuur beschermt kleuren en voorkomt krimpen, terwijl het nog steeds effectief reinigt.",
+        temp: "40°C", tijd: "1u 20m", centrifuge: "1200 rpm",
+        tips: ["Perfect voor gekleurde T-shirts en broeken", "Draai kleding binnenstebuiten om kleuren te beschermen", "Geschikt voor de meeste etiketten met wasbak-symbool"]
+      },
+      {
+        id: 2, name: "Synthetisch", icon: "ti-building-factory",
+        bg: "#fef9c3", iconColor: "#854d0e",
+        desc: "Voor polyester, nylon, acryl en gemengde stoffen.",
+        long: "Synthetische stoffen reageren anders op warmte dan natuurlijke vezels. Dit programma gebruikt lagere temperaturen en minder mechanische beweging om vervorming en pilling te voorkomen.",
+        temp: "40°C", tijd: "55m", centrifuge: "800 rpm",
+        tips: ["Gebruik een wasmiddelzakje voor microvezels", "Vul de trommel niet te vol", "Geschikt voor sportkledij en fleece"]
+      },
+      {
+        id: 3, name: "Fijne was", icon: "ti-diamond",
+        bg: "#fce7f3", iconColor: "#9d174d",
+        desc: "Voor zijde, zijdeachtige stoffen en delicate kledingstukken.",
+        long: "Maakt gebruik van minimale beweging en koude temperaturen om delicate stoffen te beschermen. De centrifuge draait op lage snelheid om kreukvorming te minimaliseren.",
+        temp: "30°C", tijd: "40m", centrifuge: "400 rpm",
+        tips: ["Gebruik altijd fijnwasmiddel", "Leg daarna plat te drogen — nooit in de droger", "Geschikt voor lingerie, zijde en kousen"]
+      },
+      {
+        id: 4, name: "Wol", icon: "ti-sheep",
+        bg: "#ede9fe", iconColor: "#5b21b6",
+        desc: "Voor wollen truien, dekens en andere wolproducten.",
+        long: "Wol krimpt of vervillt gemakkelijk bij te hoge temperaturen of te veel beweging. Dit programma gebruikt koud water en minimale mechanische actie.",
+        temp: "30°C", tijd: "45m", centrifuge: "600 rpm",
+        tips: ["Gebruik wolwasmiddel of een mild zeepproduct", "Nooit warm drogen — altijd plat neerleggen", "Controleer het etiket: sommige wol is niet wasbaar"]
+      },
+      {
+        id: 5, name: "Snel 30'", icon: "ti-bolt",
+        bg: "#d1fae5", iconColor: "#065f46",
+        desc: "Snel wassen voor licht bevuild wasgoed dat een opfrisbeurt nodig heeft.",
+        long: "Ideaal wanneer kleding niet erg vuil is maar een verfrissing nodig heeft. Perfect voor kleding die je maar korte tijd gedragen hebt of die alleen licht naar zweet ruikt.",
+        temp: "30°C", tijd: "30m", centrifuge: "1000 rpm",
+        tips: ["Alleen voor licht bevuild wasgoed", "Niet geschikt voor vlekken of echt vuil wasgoed", "Energiezuinige optie voor tussendoor"]
+      },
+      {
+        id: 6, name: "Eco 40-60", icon: "ti-leaf",
+        bg: "#ecfccb", iconColor: "#3f6212",
+        desc: "Energiezuinig programma dat zowel bij 40° als 60° effectief wast.",
+        long: "Ontworpen om zo min mogelijk energie te verbruiken. Het programma duurt langer maar verbruikt aanzienlijk minder water en stroom dan een standaard wasprogramma.",
+        temp: "40–60°C", tijd: "3u 30m", centrifuge: "1200 rpm",
+        tips: ["Beste keuze voor het milieu en energiebesparing", "Ideaal als je niet haast hebt", "Combine met een volle lading voor maximale efficiëntie"]
+      },
+      {
+        id: 7, name: "Donkere kleuren", icon: "ti-moon",
+        bg: "#e5e7eb", iconColor: "#1f2937",
+        desc: "Speciaal programma om donkere kleuren te beschermen en te verlevendigen.",
+        long: "Donkere stoffen verliezen hun kleur sneller door warmte en wrijving. Dit programma gebruikt koude temperaturen en zachte beweging om zwart en donkere kleuren te behouden.",
+        temp: "20°C", tijd: "50m", centrifuge: "800 rpm",
+        tips: ["Gebruik wasmiddel voor donkere was", "Draai kleding altijd binnenstebuiten", "Voeg een kopje azijn toe om kleuren te fixeren"]
+      },
+      {
+        id: 8, name: "Beddengoed", icon: "ti-bed",
+        bg: "#dbeafe", iconColor: "#1e3a8a",
+        desc: "Voor lakens, dekbedovertrekken, kussensloopjes en andere beddengoed.",
+        long: "Beddengoed is groot en zwaar en vereist een speciaal programma om te zorgen dat alles goed doorwassen wordt. Dit programma heeft extra water en langere wasbeurten.",
+        temp: "60°C", tijd: "2u 10m", centrifuge: "1000 rpm",
+        tips: ["Was niet meer dan 1 dekbedovertrek tegelijk", "Controleer of de trommel niet onevenwichtig draait", "Gebruik minder wasmiddel — grote items maken meer schuim"]
+      },
+      {
+        id: 9, name: "Sportkleding", icon: "ti-run",
+        bg: "#fee2e2", iconColor: "#991b1b",
+        desc: "Speciaal voor functionele sportkleding met high-tech vezels.",
+        long: "Sportkleding is gemaakt van speciale synthetische vezels die vochtafvoer bevorderen. Hoge temperaturen beschadigen deze vezels. Dit programma reinigt effectief op lage temperatuur.",
+        temp: "30°C", tijd: "50m", centrifuge: "800 rpm",
+        tips: ["Gebruik geen wasverzachter — dit verstopt de vezels", "Gebruik een speciaal sportwasmiddel", "Was snel na gebruik om geurvorming te voorkomen"]
+      }
+    ];
+
+    let active = null;
+
+    function renderGrid() {
+      document.getElementById('grid').innerHTML = programs.map(p => `
+        <div class="card ${active === p.id ? 'active' : ''}" onclick="select(${p.id})">
+          <div class="card-top">
+            <div class="icon-wrap" style="background:${p.bg}">
+              <i class="ti ${p.icon}" style="color:${p.iconColor}"></i>
+            </div>
+            <div class="card-name">${p.name}</div>
+          </div>
+          <div class="card-desc">${p.desc}</div>
+          <div class="tags">
+            <span class="tag">${p.temp}</span>
+            <span class="tag">${p.tijd}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function select(id) {
+      active = active === id ? null : id;
+      renderGrid();
+      const el = document.getElementById('detail');
+      if (active === null) { el.classList.remove('visible'); return; }
+      const p = programs[id];
+      el.innerHTML = `
+        <div class="detail-header">
+          <div class="detail-icon" style="background:${p.bg}">
+            <i class="ti ${p.icon}" style="color:${p.iconColor}; font-size:22px"></i>
+          </div>
+          <div class="detail-title">${p.name}</div>
+        </div>
+        <p class="detail-long">${p.long}</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-label">Temperatuur</div><div class="stat-val">${p.temp}</div></div>
+          <div class="stat"><div class="stat-label">Duur</div><div class="stat-val">${p.tijd}</div></div>
+          <div class="stat"><div class="stat-label">Centrifuge</div><div class="stat-val">${p.centrifuge}</div></div>
+        </div>
+        <div class="tips">
+          <div class="tips-title">Tips</div>
+          ${p.tips.map(t => `<div class="tip"><i class="ti ti-check"></i><span>${t}</span></div>`).join('')}
+        </div>
+      `;
+      el.classList.add('visible');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    renderGrid();
+  </script>
+</body>
+</html>
