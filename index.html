@@ -3,57 +3,655 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming soon</title>
+  <title>Wasmachine — Indesit Innex BWA 71483</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #f5f5f3;
+      --surface: #ffffff;
+      --surface-2: #ecebe7;
       --text-primary: #1a1a18;
       --text-secondary: #5f5e5a;
       --border: rgba(0,0,0,0.1);
+      --accent: #2f6fd6;
+      --everyday: #3a9d6a;
+      --traditional: #c2761f;
+      --special: #8a55c8;
+      --extra: #5f5e5a;
+      --wet: #2f8fd6;
+      --wrinkle: #d6852f;
+      --track: rgba(0,0,0,0.08);
+      --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #1a1a18;
+        --surface: #232320;
+        --surface-2: #2d2d29;
         --text-primary: #f1efe8;
-        --text-secondary: #888780;
+        --text-secondary: #969489;
         --border: rgba(255,255,255,0.1);
+        --accent: #6ea8ff;
+        --everyday: #5fc78c;
+        --traditional: #e2a45c;
+        --special: #b389e8;
+        --extra: #969489;
+        --wet: #6ab8ee;
+        --wrinkle: #e2a45c;
+        --track: rgba(255,255,255,0.09);
+        --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
       }
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .placeholder {
-      text-align: center;
-      padding: 2rem;
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    header { margin-bottom: 1.75rem; }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
     }
 
     h1 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 10px;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
     }
 
-    p {
+    .intro {
       font-size: 15px;
       color: var(--text-secondary);
+      max-width: 58ch;
+    }
+
+    .specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .spec {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 0.3rem 0.6rem;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--text-secondary);
+    }
+
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--bg);
+      padding: 1rem 0 0.85rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search {
+      width: 100%;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.7rem 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+    .search::placeholder { color: var(--text-secondary); }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .chip:hover { color: var(--text-primary); }
+    .chip[aria-pressed="true"] {
+      background: var(--text-primary);
+      color: var(--bg);
+      border-color: var(--text-primary);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 0.9rem;
+      margin-top: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.15rem 1.2rem;
+      box-shadow: var(--shadow);
+      border-left: 3px solid var(--cat-color, var(--border));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .num {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--bg);
+      background: var(--cat-color, var(--text-secondary));
+      min-width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    .cat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--cat-color, var(--text-secondary));
+      margin-bottom: 0.6rem;
+    }
+
+    .desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 0.85rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 0.9rem;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--text-secondary);
+    }
+
+    .stats {
+      display: flex;
+      gap: 1.1rem;
+      padding: 0.7rem 0;
+      border-top: 1px solid var(--border);
+      margin-bottom: 0.85rem;
+    }
+    .stat .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .stat .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .meters { margin-top: auto; display: flex; flex-direction: column; gap: 0.55rem; }
+    .meter-row { display: flex; align-items: center; gap: 0.6rem; }
+    .meter-name {
+      font-size: 12px;
+      font-weight: 600;
+      width: 5.4rem;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+    }
+    .bar {
+      flex: 1;
+      display: flex;
+      gap: 3px;
+    }
+    .seg {
+      flex: 1;
+      height: 7px;
+      border-radius: 2px;
+      background: var(--track);
+    }
+    .seg.on-wet { background: var(--wet); }
+    .seg.on-wrinkle { background: var(--wrinkle); }
+    .meter-val {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      width: 4.6rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .explainer {
+      margin-top: 2.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+    .explainer h2 {
+      font-size: 18px;
+      font-weight: 650;
+      margin-bottom: 0.75rem;
+    }
+    .explainer p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 0.6rem;
+    }
+    .explainer .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .legend-item {
+      font-size: 13px;
+      padding: 0.75rem 0.9rem;
+      background: var(--surface-2);
+      border-radius: 10px;
+    }
+    .legend-item strong { display: block; margin-bottom: 0.15rem; font-size: 13px; }
+    .legend-item .swatch {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      margin-right: 0.35rem;
+      vertical-align: baseline;
+    }
+
+    .note {
+      margin-top: 1.5rem;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 0.85rem 1rem;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+    }
+    .note code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      background: var(--surface-2);
+      padding: 0.05rem 0.3rem;
+      border-radius: 4px;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="placeholder">
-    <h1>Coming soon</h1>
-    <p>Er komt hier binnenkort iets moois.</p>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Mijn wasmachine</div>
+      <h1>Indesit Innex BWA 71483</h1>
+      <p class="intro">
+        Een overzicht van alle wasprogramma's: waar ze voor bedoeld zijn, op
+        welke temperatuur ze draaien — en hoe nat en kreukelig de was er
+        ongeveer uit komt.
+      </p>
+      <div class="specs">
+        <span class="spec">7 kg</span>
+        <span class="spec">1400 toeren</span>
+        <span class="spec">A+++</span>
+        <span class="spec">Push &amp; Wash</span>
+        <span class="spec">InverterMotor</span>
+      </div>
+    </header>
+
+    <div class="controls">
+      <input
+        type="search"
+        class="search"
+        id="search"
+        placeholder="Zoek op wat je gaat wassen — bijv. handdoeken, wol, sport, beddengoed…"
+        autocomplete="off"
+      />
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <section class="explainer">
+      <h2>Hoe lees je "nattigheid" en "kreukels"?</h2>
+      <p>
+        Hoe nat en hoe kreukelig de was uit de machine komt, hangt vooral af van
+        het <strong>centrifugetoerental</strong> aan het eind van het programma —
+        en van de stof zelf.
+      </p>
+      <p>
+        <strong>Hoog toerental (1400)</strong> → de was komt er bijna droog uit,
+        maar katoen kreukt dan flink. <strong>Laag of geen toerental</strong> →
+        de was blijft natter, maar kreukt veel minder. Wol- en fijne-was­programma's
+        centrifugeren zacht en kort, juist om kreuken en krimpen te voorkomen.
+      </p>
+      <div class="legend">
+        <div class="legend-item">
+          <strong><span class="swatch" style="background:var(--wet)"></span>Nattigheid</strong>
+          1 balkje = komt er bijna droog uit · 5 balkjes = nog kletsnat,
+          drooglijn of droger nodig.
+        </div>
+        <div class="legend-item">
+          <strong><span class="swatch" style="background:var(--wrinkle)"></span>Kreukels</strong>
+          1 balkje = glad, nauwelijks strijken · 5 balkjes = flink kreukelig,
+          strijken aan te raden.
+        </div>
+      </div>
+      <div class="note">
+        Let op: de programmagegevens hieronder zijn gebaseerd op de Indesit Innex
+        BWA-serie handleiding. Temperaturen, toeren en maximale lading kunnen per
+        uitvoering iets afwijken — controleer ze met de papieren handleiding van
+        jouw machine. Aanpassen kan eenvoudig in de lijst <code>PROGRAMS</code>
+        bovenin het script van deze pagina.
+      </div>
+    </section>
+
+    <footer>
+      Gemaakt voor mijn eigen wasmachine · gehost op GitHub Pages
+    </footer>
   </div>
+
+  <script>
+    /* ----------------------------------------------------------------
+       Programmagegevens — pas hier gerust aan als jouw handleiding
+       andere waarden geeft.
+
+       cat      : "everyday" | "traditional" | "special" | "extra"
+       temp     : tekst zoals op het display
+       spin     : max. centrifuge in toeren (0 = geen)
+       load     : max. lading in kg (null = n.v.t.)
+       wetness  : 1 (bijna droog) .. 5 (kletsnat)
+       wrinkle  : 1 (glad) .. 5 (erg kreukelig)
+       tags     : trefwoorden waarop je kunt zoeken
+    ---------------------------------------------------------------- */
+    const PROGRAMS = [
+      {
+        n: "P&W", cat: "extra", name: "Push & Wash",
+        desc: "Eén knop, geen instellingen. Snelle dagelijkse was van katoen en synthetisch, klaar in ±45 min.",
+        temp: "30°", spin: 1000, load: 4, wetness: 3, wrinkle: 3,
+        tags: ["snel", "dagelijks", "katoen", "synthetisch", "gemengd", "45 minuten"]
+      },
+      {
+        n: "1", cat: "everyday", name: "Everyday 30° ECO",
+        desc: "Licht vervuilde dagelijkse was, katoen en synthetisch door elkaar. Zuinig en op lage temperatuur.",
+        temp: "30°", spin: 1000, load: 3.5, wetness: 3, wrinkle: 2,
+        tags: ["dagelijks", "gemengd", "katoen", "synthetisch", "licht vuil", "zuinig", "eco"]
+      },
+      {
+        n: "2", cat: "everyday", name: "Dagelijks katoen",
+        desc: "Licht vervuild katoen voor dagelijks gebruik — T-shirts, ondergoed, lakens.",
+        temp: "30°", spin: 1000, load: 3.5, wetness: 3, wrinkle: 3,
+        tags: ["katoen", "dagelijks", "t-shirts", "ondergoed", "lakens", "licht vuil"]
+      },
+      {
+        n: "3", cat: "everyday", name: "Dagelijks synthetisch",
+        desc: "Licht vervuilde synthetische kleding — sportshirts, blouses, gemengde stoffen.",
+        temp: "30°", spin: 1000, load: 3, wetness: 2, wrinkle: 2,
+        tags: ["synthetisch", "dagelijks", "blouses", "shirts", "licht vuil"]
+      },
+      {
+        n: "4", cat: "everyday", name: "Bonte was",
+        desc: "Gekleurde was die je kleur wilt sparen. Lage temperatuur houdt kleuren langer mooi.",
+        temp: "30°", spin: 1000, load: 3.5, wetness: 3, wrinkle: 3,
+        tags: ["kleur", "bont", "gekleurd", "kleurbehoud"]
+      },
+      {
+        n: "5", cat: "everyday", name: "Mix 30 min",
+        desc: "Snelle opfriswas voor een klein, licht vervuild gemengd ladinkje. Klaar in 30 minuten.",
+        temp: "30°", spin: 800, load: 3, wetness: 3, wrinkle: 2,
+        tags: ["snel", "30 minuten", "opfrissen", "gemengd", "klein", "licht vuil"]
+      },
+      {
+        n: "6", cat: "traditional", name: "Katoen",
+        desc: "Normaal tot zwaar vervuild katoen — wit en kleurecht. Het krachtige standaard katoenprogramma.",
+        temp: "40° (max 60°)", spin: 1400, load: 7, wetness: 1, wrinkle: 4,
+        tags: ["katoen", "wit", "kleurecht", "handdoeken", "lakens", "zwaar vuil"]
+      },
+      {
+        n: "7", cat: "traditional", name: "Synthetisch",
+        desc: "Normaal tot zwaar vervuilde, kleurechte synthetische stoffen.",
+        temp: "40° (max 60°)", spin: 1000, load: 3.5, wetness: 2, wrinkle: 2,
+        tags: ["synthetisch", "kleurecht", "zwaar vuil"]
+      },
+      {
+        n: "8", cat: "traditional", name: "Gemengd",
+        desc: "Gemengde lading van katoen en synthetisch in één wasbeurt.",
+        temp: "40°", spin: 1400, load: 7, wetness: 2, wrinkle: 3,
+        tags: ["gemengd", "katoen", "synthetisch", "gewone was"]
+      },
+      {
+        n: "9", cat: "traditional", name: "Eco katoen 60°/40°",
+        desc: "Het zuinige standaardprogramma van het energielabel. Lang maar erg efficiënt met water en stroom.",
+        temp: "60° / 40°", spin: 1400, load: 7, wetness: 1, wrinkle: 4,
+        tags: ["katoen", "eco", "zuinig", "energielabel", "standaard", "wit"]
+      },
+      {
+        n: "10", cat: "traditional", name: "Wit katoen",
+        desc: "Zwaar vervuild, hittebestendig wit katoen — vaatdoeken, witte handdoeken, beddengoed.",
+        temp: "60° (max 90°)", spin: 1400, load: 7, wetness: 1, wrinkle: 5,
+        tags: ["wit", "katoen", "zwaar vuil", "handdoeken", "beddengoed", "hygiëne", "heet"]
+      },
+      {
+        n: "11", cat: "special", name: "Sport",
+        desc: "Sportkleding en gymspullen. Zachte centrifuge zodat technische stoffen heel blijven.",
+        temp: "30°", spin: 600, load: 3, wetness: 4, wrinkle: 2,
+        tags: ["sport", "sportkleding", "gym", "technische stof", "zweet"]
+      },
+      {
+        n: "12", cat: "special", name: "Dekbed",
+        desc: "Eén dekbed of gevuld kledingstuk (donsjas) per keer. Ruime trommelbeweging, voorzichtige centrifuge.",
+        temp: "30°", spin: 1000, load: 3.5, wetness: 3, wrinkle: 2,
+        tags: ["dekbed", "donsjas", "kussen", "groot", "dons"]
+      },
+      {
+        n: "13", cat: "special", name: "Wol",
+        desc: "Wol, kasjmier en handwas-veilige stoffen. Heel zacht programma — Woolmark-goedgekeurd.",
+        temp: "40°", spin: 800, load: 2, wetness: 3, wrinkle: 1,
+        tags: ["wol", "kasjmier", "handwas", "fijne was", "trui", "woolmark"]
+      },
+      {
+        n: "14", cat: "special", name: "Anti-geur",
+        desc: "Frist textiel op dat naar rook, eten of zweet ruikt, zonder een volledige wasbeurt.",
+        temp: "40°", spin: 1000, load: 3.5, wetness: 3, wrinkle: 3,
+        tags: ["geur", "opfrissen", "rook", "zweet", "anti-geur"]
+      },
+      {
+        n: "↻", cat: "extra", name: "Spoelen + Centrifuge",
+        desc: "Extra spoelbeurt gevolgd door centrifugeren. Handig bij gevoelige huid of extra wasmiddel.",
+        temp: "—", spin: 1400, load: 7, wetness: 1, wrinkle: 3,
+        tags: ["spoelen", "centrifuge", "extra spoeling", "gevoelige huid"]
+      },
+      {
+        n: "∳", cat: "extra", name: "Centrifuge + Pomp",
+        desc: "Alleen centrifugeren en het water wegpompen. Voor was die al gewassen is of nog te nat is.",
+        temp: "—", spin: 1400, load: 7, wetness: 1, wrinkle: 3,
+        tags: ["centrifuge", "pompen", "afpompen", "water weg"]
+      }
+    ];
+
+    const CATEGORIES = [
+      { id: "all",         label: "Alle" },
+      { id: "everyday",    label: "Everyday 30° ECO" },
+      { id: "traditional", label: "Traditioneel" },
+      { id: "special",     label: "Speciaal" },
+      { id: "extra",       label: "Extra" }
+    ];
+
+    const CAT_COLOR = {
+      everyday: "var(--everyday)",
+      traditional: "var(--traditional)",
+      special: "var(--special)",
+      extra: "var(--extra)"
+    };
+    const CAT_NAME = {
+      everyday: "Everyday 30° ECO",
+      traditional: "Traditioneel",
+      special: "Speciaal",
+      extra: "Extra"
+    };
+
+    let activeCat = "all";
+    let query = "";
+
+    const grid = document.getElementById("grid");
+    const filtersEl = document.getElementById("filters");
+    const searchEl = document.getElementById("search");
+
+    function segments(value, kind) {
+      let out = "";
+      for (let i = 1; i <= 5; i++) {
+        out += '<span class="seg' + (i <= value ? " on-" + kind : "") + '"></span>';
+      }
+      return out;
+    }
+
+    const WET_WORDS = ["bijna droog", "vrij droog", "wat vochtig", "behoorlijk nat", "kletsnat"];
+    const WRINKLE_WORDS = ["glad", "iets kreukel", "matig kreukel", "kreukelig", "erg kreukelig"];
+
+    function card(p) {
+      const color = CAT_COLOR[p.cat];
+      const loadTxt = p.load == null ? "n.v.t." : p.load + " kg";
+      const spinTxt = p.spin === 0 ? "geen" : p.spin + " tpm";
+      return `
+        <article class="card" style="--cat-color:${color}">
+          <div class="card-top">
+            <span class="num">${p.n}</span>
+            <h3>${p.name}</h3>
+          </div>
+          <div class="cat-label">${CAT_NAME[p.cat]}</div>
+          <p class="desc">${p.desc}</p>
+          <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">Temp.</div>
+              <div class="stat-value">${p.temp}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Centrifuge</div>
+              <div class="stat-value">${spinTxt}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Max. lading</div>
+              <div class="stat-value">${loadTxt}</div>
+            </div>
+          </div>
+          <div class="meters">
+            <div class="meter-row">
+              <span class="meter-name">Nattigheid</span>
+              <span class="bar">${segments(p.wetness, "wet")}</span>
+              <span class="meter-val">${WET_WORDS[p.wetness - 1]}</span>
+            </div>
+            <div class="meter-row">
+              <span class="meter-name">Kreukels</span>
+              <span class="bar">${segments(p.wrinkle, "wrinkle")}</span>
+              <span class="meter-val">${WRINKLE_WORDS[p.wrinkle - 1]}</span>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function matches(p) {
+      if (activeCat !== "all" && p.cat !== activeCat) return false;
+      if (!query) return true;
+      const haystack = (p.name + " " + p.desc + " " + p.tags.join(" ")).toLowerCase();
+      return query.split(/\s+/).every(word => haystack.includes(word));
+    }
+
+    function render() {
+      const list = PROGRAMS.filter(matches);
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="empty">Geen programma gevonden voor "' +
+          query + '". Probeer een ander woord.</div>';
+        return;
+      }
+      grid.innerHTML = list.map(card).join("");
+    }
+
+    function renderFilters() {
+      filtersEl.innerHTML = CATEGORIES.map(c =>
+        `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id === activeCat}">${c.label}</button>`
+      ).join("");
+      filtersEl.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeCat = btn.dataset.cat;
+          renderFilters();
+          render();
+        });
+      });
+    }
+
+    searchEl.addEventListener("input", () => {
+      query = searchEl.value.trim().toLowerCase();
+      render();
+    });
+
+    renderFilters();
+    render();
+  </script>
 </body>
 </html>
