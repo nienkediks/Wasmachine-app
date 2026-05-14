@@ -111,7 +111,7 @@
 
     .search {
       width: 100%;
-      font-size: 15px;
+      font-size: 16px;
       font-family: inherit;
       color: var(--text-primary);
       background: var(--surface);
@@ -147,6 +147,7 @@
       color: var(--bg);
       border-color: var(--text-primary);
     }
+    .chip:active { transform: scale(0.97); }
 
     .grid {
       display: grid;
@@ -341,6 +342,24 @@
       font-size: 12px;
       color: var(--text-secondary);
       text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 1.5rem 1rem 3rem; }
+      header { margin-bottom: 1.25rem; }
+      .grid { grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1rem; }
+      .controls { padding: 0.75rem 0 0.7rem; }
+      .chip { padding: 0.55rem 0.9rem; }
+      .card { padding: 1rem 1rem 1.1rem; }
+      .stats { gap: 0.85rem; }
+      .meter-name { width: 4.6rem; }
+      .meter-val { width: 3.9rem; }
+      .explainer { padding: 1.15rem; margin-top: 2rem; }
+      .explainer .legend { grid-template-columns: 1fr; }
+    }
+
+    @media (hover: none) {
+      .chip { -webkit-tap-highlight-color: transparent; }
     }
   </style>
 </head>
